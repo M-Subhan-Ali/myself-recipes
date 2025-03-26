@@ -3,23 +3,27 @@ import mongoose from "mongoose";
 const user_Schema = mongoose.Schema({
   username : {
     type : String,
-    required : true,
+    required:true,
+    unique:true,
     trim : true,
-    sparse : true,
+    // sparse : true,
   },
   email:{
     type : String,
-    required : true,
-    sparse : true,
+    required:true,
+    unique:true,
+    trim:true,
+    // sparse : true,
+    // match: [/^\S+@\S+\.\S+$/, "Please enter a valid email address"],
   },
   password:{
     type:String,
     required:true
   },
-  saved_Recipes:{
+  saved_Recipes:[{
     type : mongoose.Schema.Types.ObjectID,
     ref : "Word_Recipe"
-  }
+  }]
 },{timeStamps : true})
 
 

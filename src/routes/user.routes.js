@@ -1,11 +1,77 @@
+import {Router} from "express";
+import { Work_User } from "../models/user.models.js";
+import bcrypt from "bcrypt"
+
+const route = Router();
+
+
+route.post("/register" , async( req , res )=>{
+   //get data from request
+   //check if username or email is provided
+   //check if user already existed or not
+   //password encoded
+   //new user
+   //save user in db
+   //send response to the frontend subhan ueueue
+
+  try {
+    const { email , username , password } = req.body;
+  
+    const regix = /^[a-zA-Z0-9+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if(email.trim() === ""){
+      return res.status(400).json({error: "Email should not be empty"});
+    }
+    if(username.trim() === ""){
+      return res.status(400).json({error: "Username are required"});
+    }
+    
+    if (!password || password.trim() === "") {
+      return res.status(400).json({ error: "Password is required" });
+    }
+
+    const existingUser = await Work_User.findOne({
+      $or : [{email} , {username}]
+    })
+     
+    if(existingUser){
+      return res.status(400).json({error: "User already exists"});
+    }
+
+    if(!regix.test(email)){
+      return res.status(400).json({error: "Email  are required in proper format"});
+    }
+  
+    const hashedPassword = await bcrypt.hash( password , 11 );
+    
+    const user = new Work_User({ 
+      email : email,
+      username : username,
+      password : hashedPassword })
+  
+    await user.save() 
+  
+    const newUser = await Work_User.findById(user._id).select("-password")
+    
+    return res.status(200).
+    json({message : "User Successfully Created",registered_User : newUser})
+  
+   
+  } catch (error) {
+
+    return res.status(500).json(
+      {error: "Internal Server Error", message: error.message }
+    
+    )
+  }
 
 
 
+})
 
 
 
-
-
+export {route as userRouter}
 
 
 
