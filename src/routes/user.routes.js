@@ -1,6 +1,7 @@
 import {Router} from "express";
 import { Work_User } from "../models/user.models.js";
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 const route = Router();
 
@@ -65,10 +66,69 @@ route.post("/register" , async( req , res )=>{
     )
   }
 
+})
+
+route.post("/login" , async( req , res ) => {
+  //req data getting
+  //check user exits or not
+  //get user
+  //comapre password
+  //generate token
+  //send data to frontend 
+
+try {
+  
+    const {username , email , password } = req.body;
+
+    if( !username || !email || !password ){
+      return res.status(400).json({error: "Please fill all fields"});
+    }
+    
+    const existingUser = await Work_User.findOne({email})
+    
+      if( !existingUser ){
+        return res.status(400).json({error: "User does not exist"})
+      } 
+
+     if( existingUser.username !== username ){
+      return res.status(400).json({error: "Invalid username!"})
+     }
+    
+    const MactchedPassword = await bcrypt.compare( password , existingUser.password );
+  
+    if( !MactchedPassword ){
+      return res.status(400).json({error: "Invalid Password"})
+    }
+  
+    const token= jwt.sign({
+      _id : existingUser._id ,
+    },"Secret",{
+      expiresIn : "2hr"
+    })
+  
+    const user = await Work_User.findById(existingUser._id).select("-password");
+  
+    return res.status(200).json({
+      message : "User Successfully Login",
+      token,
+      UserID : user._id
+    })
+  
+} catch (error) {
+
+  return res.status(500).
+  json({
+    Error:`server Error ${error}`
+    ,message:`server Error ${error.message}
+    `})
+
+}
+
+
+
 
 
 })
-
 
 
 export {route as userRouter}
