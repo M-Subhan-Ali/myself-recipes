@@ -3,6 +3,7 @@ import express from "express";
 import mongoose from "mongoose"
 import cors from "cors"
 import { userRouter } from './routes/user.routes.js';
+import { RecipeCreation } from './routes/recipe.routes.js';
 
 
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 app.use(cors())
 
 app.use("/auth" , userRouter)
+app.use("/recipes" , RecipeCreation )
 
 mongoose.connect("mongodb+srv://recipebackend:mernrecipe4321@recipe-app.johwy.mongodb.net/recipe-app?retryWrites=true&w=majority&appName=recipe-app")
   .then(() => {

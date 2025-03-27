@@ -1,5 +1,28 @@
+import { Router } from "express";
+import { Work_User } from "../models/user.models.js";
+import { Work_Recipe } from "../models/recipe.models.js";
+
+const route = Router();
+
+route.post( "/create_recipe" , async ( req , res ) => {
+  try {
+      
+    const recipe = new Work_Recipe(req.body);
+    
+    await recipe.save();
+ 
+    res.status(201).json({message:"Recipe Created SuccessFully ✅",
+      recipe
+    })
+  
+  } catch (error) {
+    return res.status(500).json({error:`internal server Error ${error}`})
+  }
+} )
 
 
+
+export {route as RecipeCreation}
 
 
 
