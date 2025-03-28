@@ -11,7 +11,7 @@ route.post( "/create_recipe" , async ( req , res ) => {
     
     await recipe.save();
  
-    res.status(201).json({message:"Recipe Created SuccessFully ✅",
+    return res.status(201).json({message:"Recipe Created SuccessFully ✅",
       recipe
     })
   
@@ -21,6 +21,92 @@ route.post( "/create_recipe" , async ( req , res ) => {
 } )
 
 
+route.get("/", async ( req , res ) => {
+  try {
+
+    const recipes = await Work_Recipe.find();
+  
+    return res.json(recipes);
+  
+  } catch (error) {
+    return res.status(500).json({error:`internal server Error ${error}`})
+  }
+})
+
+
+route.put("/update_save_recipes/:UserID" , async ( req , res ) => {
+  try {
+    const recipe = await Work_Recipe.findById(req.body.recipeID);
+    const user = await Work_User.findById(req.params.UserID);
+    
+    if( user.saved_Recipes.includes(recipe._id) ){
+      return res.status(400).json({message:"already saved "})
+    }
+
+    user.saved_Recipes.push(recipe._id)
+    await user.save()
+  
+    return res
+    .status(201)
+    .json({
+      saved_Recipes : user.saved_Recipes
+    })
+  
+  } catch (error) {
+   
+    return res
+    .status(500)
+    .json({
+      error :  `Interval server error ${error}`
+    })
+  
+  }
+
+})
+
+
+route.get("/User_saved_Recipes/:UserID" , async ( req , res ) => {
+
+try {
+  const user = await Work_User.findById(req.params.UserID);
+  return res.
+  status(201).
+  json({
+    saved_Recipes : user?.saved_Recipes
+  })
+  
+} catch (error) {
+  return res
+  .status(500)
+  .json({
+    error :  `Interval server error ${error}`
+  })
+}
+})
+
+
+route.get("/recipes_saved/:UserID" , async ( req , res ) => {
+  try {
+    const user = await Work_User.findById(req.params.UserID);
+  
+    const saved_Recipes = await Work_Recipe.find({
+      _id : { $in : user.saved_Recipes}
+    })
+  
+    return res.status(200).json({
+      saved_Recipes
+    })
+  } catch (error) {
+
+  return res
+  .status(500)
+  .json({
+    error :  `Interval server error ${error}`
+  })
+
+  }
+
+})
 
 export {route as RecipeCreation}
 

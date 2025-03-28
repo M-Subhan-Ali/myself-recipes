@@ -20,6 +20,11 @@ const WorkRecipe_Schema = new mongoose.Schema({
   cooking_Time:{
     type:Number,
     required:true
+  },
+  OwnerOfRecipe:{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"Work_User",
+    required:true
   }
 })
 
