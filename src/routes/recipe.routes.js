@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Work_User } from "../models/user.models.js";
 import { Work_Recipe } from "../models/recipe.models.js";
+import { verifyJWT } from "./user.routes.js";
 
 const route = Router();
 
@@ -34,7 +35,7 @@ route.get("/", async ( req , res ) => {
 })
 
 
-route.put("/update_save_recipes/:UserID" , async ( req , res ) => {
+route.put("/update_save_recipes/:UserID" , verifyJWT , async ( req , res ) => {
   try {
     const recipe = await Work_Recipe.findById(req.body.recipeID);
     const user = await Work_User.findById(req.params.UserID);

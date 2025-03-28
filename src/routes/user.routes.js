@@ -102,7 +102,7 @@ try {
   
     const token= jwt.sign({
       _id : existingUser._id ,
-    },"Secret",{
+    },"a1232a",{
       expiresIn : "2hr"
     })
   
@@ -129,6 +129,21 @@ try {
 
 
 })
+
+export const verifyJWT = ( req , res ,next ) => {
+  const token = req.headers.authorization;
+
+  if(token){
+    jwt.verify(token , "a1232a" , (err)=>{
+      if(err){
+        return res.status(403)
+      }
+    })
+    next()
+  }else{
+    return res.status(401).json({message : "No Token Provided!"})
+  }
+}
 
 
 export {route as userRouter}
