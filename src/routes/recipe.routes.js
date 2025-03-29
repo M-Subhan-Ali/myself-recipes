@@ -5,7 +5,7 @@ import { verifyJWT } from "./user.routes.js";
 
 const route = Router();
 
-route.post( "/create_recipe" , async ( req , res ) => {
+route.post( "/create_recipe", verifyJWT , async ( req , res ) => {
   try {
       
     const recipe = new Work_Recipe(req.body);
